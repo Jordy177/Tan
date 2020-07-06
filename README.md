@@ -1,7 +1,7 @@
 # Tan
 Table analyzer Synapse
 
-##Folders to add yourself
+Folders to add yourself
 input, output
 
 In input folder your old table should have the name old_table.sql and the new one new_table.sql
