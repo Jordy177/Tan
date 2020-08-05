@@ -44,11 +44,13 @@ class read_table:
         r = raw_table.find('WITH')
         end = raw_table.rfind(')', 0, r)
 
-        t = raw_table[begin:end].replace('\n', '').replace('\t', '').split(',')
+        t = raw_table[begin:end].replace('\n', '').replace('\t', ' ').split(',')
+
         u = raw_table[:end+1]
 
         n = []
         for line in t:
+            line = ' '.join(line.split())
             line_dict = {'column_name': line.strip().split(' ')[0], 'column_type': line.strip(
             ).split(' ')[1].upper(), 'null-type': line.strip().split(' ')[2].upper()}
             n.append(line_dict)
@@ -79,7 +81,7 @@ class compare_table(read_table):
         else:
             print('Table names are not the same!')
             exit()
-        old_table = obj_old_table.read_column_names(True)
+        old_table = obj_old_table.read_column_names(False)
         new_table = obj_new_table.read_column_names(False)
 
         # Change dictionary to dataframe
@@ -92,7 +94,13 @@ class compare_table(read_table):
         df_add_filtered = df_add[df_add['column_type_y'].isnull()]
         df_diff = pd.merge(df_new, df_old, on=['column_name'], how='inner')
 
-        output_dict = {'drop': df_remove_filtered['column_name'].tolist(),
+        df_diff = df_diff.filter(df_diff['column_type_x'] == df_diff['column_type_y'])
+
+        if df_diff.empty:
+            output_dict = {'drop': df_remove_filtered['column_name'].tolist(),
+                       'add': df_add_filtered[['column_name', 'column_type_x', 'null-type_x']].values.tolist()}         
+        else:
+            output_dict = {'drop': df_remove_filtered['column_name'].tolist(),
                        'add': df_add_filtered[['column_name', 'column_type_x', 'null-type_x']].values.tolist(),
                        'alter': df_diff[['column_name', 'column_type_y', 'null-type_y']].values.tolist()}
 
