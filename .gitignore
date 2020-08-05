@@ -1,5 +1,5 @@
 # Compile folder
-src/__pycache__/
+app/__pycache__/
 input/
 output/
 .vscode/
