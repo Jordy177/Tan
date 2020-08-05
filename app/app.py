@@ -11,3 +11,5 @@ compare = ct(conf.old_table, conf.new_table)
 output = co(compare.compare_table())
 
 output.alter_table_script(compare.get_table_name())
+
+print('ALTER TABLE Script successfully created!')
